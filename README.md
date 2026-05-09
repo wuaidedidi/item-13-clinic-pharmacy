@@ -6,21 +6,21 @@
 - Frontend: Vue 3 + Vite + Element Plus + Pinia + Axios + Zod
 - Backend: Python FastAPI + SQLAlchemy 2.x + Pydantic + JWT
 - Database: MySQL 8.0
-- Infra: Docker Compose + Nginx
+- Infra: 单文件 Docker 启动 + Nginx
 
 ## 🚀 启动指南 (How to Run)
-1. 确保 Docker Desktop 已启动。
-2. 在根目录执行：`docker compose up --build`
-3. 等待 `mysql`、`backend`、`frontend` 三个容器启动完成。
+1. 进入 environment 目录。
+2. 执行 `docker build -t item13-single:latest .`
+3. 执行 `docker run --rm -p 3013:3013 -p 8013:8013 item13-single:latest`
 4. 打开前端地址并使用测试账号登录。
 
 ## 🔗 服务地址 (Services)
 - Frontend: http://localhost:3013
 - Backend Swagger: http://localhost:8013/docs
 - Backend Health: http://localhost:8013/health
-- Database: localhost:3313 (user: root / pass: root)
+- Database: 容器内 3306，不映射到宿主机
 
-端口说明：本机 3000、8000、3306 已被占用，因此按项目编号调整为 3013、8013、3313；容器内部仍使用前端 80、后端 8000、MySQL 3306。
+端口说明：前端固定 3013，后端固定 8013，数据库只在容器内 3306 监听。
 
 ## 🧪 测试账号
 - Admin: admin / 123456
@@ -108,12 +108,11 @@ erDiagram
 - 2 条库存盘点记录、1 条待确认调整单。
 - 2 条待审采购补货单。
 
-如果需要重新执行初始化数据，可停止容器后删除 Docker volume，再重新启动。
+如果需要重新执行初始化数据，可删除容器后重新启动。
 
 ## 📁 项目结构
 ```text
 .
-├── docker-compose.yml        # 前端、后端、MySQL 一键编排
 ├── init.sql                  # MySQL 表结构与演示数据
 ├── backend/                  # FastAPI 后端
 │   ├── app/api/              # 路由层
@@ -131,8 +130,8 @@ erDiagram
 ## 🔧 Professional Engineering Practices
 | 维度 | 已实现 |
 | --- | --- |
-| Docker 一键启动 | ✅ 前端、后端、MySQL 全部容器化 |
-| 数据持久化 | ✅ MySQL Docker Volume |
+| Docker 一键启动 | ✅ 单文件启动前端、后端和数据库 |
+| 数据持久化 | ✅ 容器内 MySQL 初始化 |
 | 中文编码 | ✅ MySQL 与连接统一 utf8mb4 |
 | ORM 数据访问 | ✅ SQLAlchemy 2.x，无业务 SQL 字符串拼接 |
 | 统一响应体 | ✅ `{code,message,data}` |
@@ -143,8 +142,7 @@ erDiagram
 | 响应式界面 | ✅ 登录页和后台页面适配桌面与移动端 |
 
 已验证：
-- `npm run build` 前端生产构建通过。
-- `python3 -m py_compile` 后端源码编译通过。
-- `docker compose up --build -d` 三容器启动成功。
-- `POST /auth/login` 使用 `admin / 123456` 登录成功。
-- `GET /api/dashboard` 使用 JWT 访问成功。
+- `docker build -t item13-single:latest .` 构建通过。
+- `docker run --rm -p 3013:3013 -p 8013:8013 item13-single:latest` 启动通过。
+- `GET http://localhost:8013/health` 返回成功。
+- `GET http://localhost:3013` 前端首页可访问。
