@@ -76,7 +76,7 @@ erDiagram
   suppliers ||--o{ purchase_orders : fulfills
 ```
 
-数据库配置使用 Docker Compose 统一管理，MySQL 服务端、初始化脚本和应用连接均使用 `clinic_pharmacy` 数据库与 `utf8mb4` 字符集，确保中文数据不乱码。
+数据库配置由单个 Dockerfile 统一管理，MySQL 服务端、初始化脚本和应用连接均使用 `clinic_pharmacy` 数据库与 `utf8mb4` 字符集，确保中文数据不乱码。
 
 ## 🔌 接口说明
 所有业务响应统一为：
